@@ -154,7 +154,54 @@
                         echo '</table></div>';
                     }
                 ?>
-               
+               <?php
+                    if(@$_GET['q']== 2) 
+                    {
+                        $q=mysqli_query($con,"SELECT * FROM history WHERE email='$email' ORDER BY date DESC " )or die('Error197');
+                        echo  '<div class="panel title">
+                        <table class="table table-striped title1" >
+                        <tr style="color:black;"><td><center><b>S.N.</b></center></td><td><center><b>Quiz</b></center></td><td><center><b>Question Solved</b></center></td><td><center><b>Right</b></center></td><td><center><b>Wrong<b></center></td><td><center><b>Score</b></center></td>';
+                        $c=0;
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                        $eid=$row['eid'];
+                        $s=$row['score'];
+                        $w=$row['wrong'];
+                        $r=$row['correct'];
+                        $qa=$row['level'];
+                        $q23=mysqli_query($con,"SELECT title FROM quiz WHERE  eid='$eid' " )or die('Error208');
+
+                        while($row=mysqli_fetch_array($q23) )
+                        {  $title=$row['title'];  }
+                        $c++;
+                        echo '<tr><td><center>'.$c.'</center></td><td><center>'.$title.'</center></td><td><center>'.$qa.'</center></td><td><center>'.$r.'</center></td><td><center>'.$w.'</center></td><td><center>'.$s.'</center></td></tr>';
+                        }
+                        echo'</table></div>';
+                    }
+
+                    if(@$_GET['q']== 3) 
+                    {
+                        $q=mysqli_query($con,"SELECT * FROM rank ORDER BY score DESC " )or die('Error223');
+                        echo  '<div class="panel title"><div class="table-responsive">
+                        <table class="table table-striped title1" >
+                        <tr style="color:red"><td><center><b>Rank</b></center></td><td><center><b>Name</b></center></td><td><center><b>Email</b></center></td><td><center><b>Score</b></center></td></tr>';
+                        $c=0;
+
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                            $e=$row['email'];
+                            $s=$row['score'];
+                            $q12=mysqli_query($con,"SELECT * FROM user WHERE email='$e' " )or die('Error231');
+                            while($row=mysqli_fetch_array($q12) )
+                            {
+                                $name=$row['name'];
+                            }
+                            $c++;
+                            echo '<tr><td style="color:black"><center><b>'.$c.'</b></center></td><td><center>'.$name.'</center></td><td><center>'.$e.'</center></td><td><center>'.$s.'</center></td></tr>';
+                        }
+                        echo '</table></div></div>';
+                    }
+                ?>
 
 </body>
 </html>
