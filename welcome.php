@@ -39,8 +39,6 @@
             </button>
         <a class="navbar-brand" href="#"><b>QuizMania</b></a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav navbar-left">
             <li <?php if(@$_GET['q']==1) echo'class="active"'; ?> ><a href="welcome.php?q=1&step=3"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;Home<span class="sr-only">(current)</span></a></li>
@@ -51,9 +49,6 @@
         <ul class="nav navbar-nav navbar-right">
         <li <?php echo''; ?> > <a href="logout.php?q=welcome.php"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Log out</a></li>
         </ul>
-        
-            
-           
        
         </div>
     </div>
@@ -105,6 +100,60 @@
                     $c=0;
                     echo '</table></div></div>';
                 }?>
+                <?php
+                    if(@$_GET['q']== 'quiz' && @$_GET['step']== 2) 
+                    {
+                        $eid=@$_GET['eid'];
+                        $sn=@$_GET['n'];
+                        $total=@$_GET['t'];
+                        $q=mysqli_query($con,"SELECT * FROM questions WHERE eid='$eid' AND sn='$sn' " );
+                        echo '<div class="panel" style="margin:5%">';
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                            $qns=$row['qns'];
+                            $qid=$row['qid'];
+                            echo '<b>Question &nbsp;'.$sn.'&nbsp;::<br /><br />'.$qns.'</b><br /><br />';
+                        }
+                        $q=mysqli_query($con,"SELECT * FROM options WHERE qid='$qid' " );
+                        echo '<form action="update.php?q=quiz&step=2&eid='.$eid.'&n='.$sn.'&t='.$total.'&qid='.$qid.'" method="POST"  class="form-horizontal">
+                        <br />';
+
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                            $option=$row['option'];
+                            $optionid=$row['optionid'];
+                            echo'<input type="radio" name="ans" value="'.$optionid.'">&nbsp;'.$option.'<br /><br />';
+                        }
+                        echo'<br /><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>&nbsp;Submit</button></form></div>';
+                    }
+
+                    if(@$_GET['q']== 'result' && @$_GET['eid']) 
+                    {
+                        $eid=@$_GET['eid'];
+                        $q=mysqli_query($con,"SELECT * FROM history WHERE eid='$eid' AND email='$email' " )or die('Error157');
+                        echo  '<div class="panel">
+                        <center><h1 class="title" style="color:#660033">Result</h1><center><br /><table class="table table-striped title1" style="font-size:20px;font-weight:1000;">';
+
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                            $s=$row['score'];
+                            $w=$row['wrong'];
+                            $r=$row['correct'];
+                            $qa=$row['level'];
+                            echo '<tr style="color:#66CCFF"><td>Total Questions</td><td>'.$qa.'</td></tr>
+                                <tr style="color:#99cc32"><td>right Answer&nbsp;<span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span></td><td>'.$r.'</td></tr> 
+                                <tr style="color:red"><td>Wrong Answer&nbsp;<span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></td><td>'.$w.'</td></tr>
+                                <tr style="color:#66CCFF"><td>Score&nbsp;<span class="glyphicon glyphicon-star" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
+                        }
+                        $q=mysqli_query($con,"SELECT * FROM rank WHERE  email='$email' " )or die('Error157');
+                        while($row=mysqli_fetch_array($q) )
+                        {
+                            $s=$row['score'];
+                            echo '<tr style="color:#990000"><td>Overall Score&nbsp;<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
+                        }
+                        echo '</table></div>';
+                    }
+                ?>
                
 
 </body>
